@@ -1,1 +1,17 @@
-<h2 style="margin-top: 0">{{ name() }}</h2>
+<section id="tasks">
+  <header>
+    <h2 style="margin-top: 0">{{ name() }}'s Tasks</h2>
+    <menu>
+      <button (click)="onAddTask()">Add Task</button>
+      <!-- <button (click)="onClearTasks()">Clear Tasks</button> -->
+    </menu>
+  </header>
+
+  <ul>
+    @for (task of selectedUserTasks; track task.id) {
+    <li>
+      <app-task [task]="task" (delete)="onDeleteTask($event)" />
+    </li>
+    }
+  </ul>
+</section>
