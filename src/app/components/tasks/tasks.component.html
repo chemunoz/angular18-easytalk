@@ -1,3 +1,7 @@
+@if (isAddingTask) {
+<app-new-task (cancel)="onCancelAddTask()" />
+}
+
 <section id="tasks">
   <header>
     <h2 style="margin-top: 0">{{ name() }}'s Tasks</h2>
