@@ -1,9 +1,8 @@
-import { Component, input } from '@angular/core';
-import { TaskComponent } from '../task/task.component';
-import { NewTaskComponent } from '../new-task/new-task.component';
+import { Component, inject, input } from '@angular/core';
+import { TaskComponent } from '@components/task/task.component';
+import { NewTaskComponent } from '@components/new-task/new-task.component';
 import { Task } from '@interfaces/task.interface';
-import { DUMMY_TASKS } from '../../dummy-tasks';
-import { NewTask } from '@app/interfaces/new-task.interface';
+import { TasksService } from '@services/tasks.service';
 
 @Component({
   selector: 'app-tasks',
@@ -15,36 +14,23 @@ import { NewTask } from '@app/interfaces/new-task.interface';
 export class TasksComponent {
   userId = input.required<string>();
   name = input.required<string>();
-
-  tasks: Task[] = DUMMY_TASKS;
   isAddingTask: boolean = false;
+  private tasksService = inject(TasksService);
 
   get selectedUserTasks(): Task[] {
-    return this.tasks.filter((task) => task.userId === this.userId());
+    return this.tasksService.getUserTasks(this.userId());
   }
 
   onStartAddTask(): void {
     this.isAddingTask = true;
   }
 
-  onAddTask(taskData: NewTask): void {
-    this.tasks.push({
-      id: Math.random().toString(),
-      userId: this.userId(),
-      title: taskData.title,
-      summary: taskData.summary,
-      dueDate: taskData.date,
-    });
-
-    this.isAddingTask = false;
-  }
-
-  onCancelAddTask(): void {
+  onCloseAddTask(): void {
     this.isAddingTask = false;
   }
 
   onCompleteTask(id: string): void {
     // We "complete" a task by removing it from the list of tasks
-    this.tasks = this.tasks.filter((task) => task.id !== id);
+    this.tasksService.removeTask(id);
   }
 }

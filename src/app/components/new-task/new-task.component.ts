@@ -1,6 +1,6 @@
-import { Component, signal, output } from '@angular/core';
+import { Component, signal, output, inject, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NewTask } from '@interfaces/new-task.interface';
+import { TasksService } from '@services/tasks.service';
 
 @Component({
   selector: 'app-new-task',
@@ -10,22 +10,29 @@ import { NewTask } from '@interfaces/new-task.interface';
   styleUrl: './new-task.component.css',
 })
 export class NewTaskComponent {
-  cancel = output<void>();
-  add = output<NewTask>();
+  userId = input.required<string>();
+  close = output<void>();
+
   enteredTitle = signal<string>('');
   enteredSummary = signal<string>('');
   enteredDate = signal<string>('');
 
+  private tasksService = inject(TasksService);
+
   onCancel(): void {
     // This method should close the New Task form
-    this.cancel.emit();
+    this.close.emit();
   }
 
   onSubmit(): void {
-    this.add.emit({
-      title: this.enteredTitle(),
-      summary: this.enteredSummary(),
-      date: this.enteredDate(),
-    });
+    this.tasksService.addTask(
+      {
+        title: this.enteredTitle(),
+        summary: this.enteredSummary(),
+        date: this.enteredDate(),
+      },
+      this.userId()
+    );
+    this.close.emit();
   }
 }
